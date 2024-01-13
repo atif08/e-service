@@ -12,6 +12,12 @@
         <div :class="isUrl('certified-users') ? 'text-white' : 'text-indigo-300 group-hover:text-white'">Applicants</div>
       </Link>
     </div>
+    <div class="mb-4">
+      <Link class="group flex items-center py-3" href="/prices">
+        <icon name="office" class="mr-2 w-4 h-4" :class="isUrl('prices') ? 'fill-white' : 'fill-indigo-400 group-hover:fill-white'" />
+        <div :class="isUrl('prices') ? 'text-white' : 'text-indigo-300 group-hover:text-white'">Prices</div>
+      </Link>
+    </div>
 
   </div>
 </template>

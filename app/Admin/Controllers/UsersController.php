@@ -18,10 +18,10 @@ class UsersController extends Controller
 {
     public function index()
     {
-        return Inertia::render('Users/Index', [
-            'filters' => Request::all('search', 'role', 'trashed'),
+        return Inertia::render('Admin/Users/Index', [
+            'filters' => Request::all('search', 'trashed'),
             'users' => User::orderByName()
-                ->filter(Request::only('search', 'role', 'trashed'))
+                ->filter(Request::only('search','trashed'))
                 ->get()
                 ->transform(fn ($user) => [
                     'id' => $user->id,
@@ -34,19 +34,19 @@ class UsersController extends Controller
 
     public function create(): Response
     {
-        return Inertia::render('Users/Create');
+        return Inertia::render('Admin/Users/Create');
     }
 
     public function store(StoreUserRequest $request): RedirectResponse
     {
         User::create($request->validated());
 
-        return Redirect::route('users')->with('success', 'User created.');
+        return Redirect::to('/users')->with('success', 'User created.');
     }
 
     public function edit(User $user): Response
     {
-        return Inertia::render('Users/Edit', [
+        return Inertia::render('Admin/Users/Edit', [
             'can' => Auth::user()->hasRole('manager'),
             'user' => [
                 'id' => $user->id,

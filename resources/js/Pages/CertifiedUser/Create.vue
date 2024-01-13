@@ -55,21 +55,17 @@
             <thead>
             <tr>
               <th class="border p-2">Description</th>
+              <th class="border p-2">Tax</th>
               <th class="border p-2">Amount</th>
+              <th class="border p-2">With Tax</th>
             </tr>
             </thead>
             <tbody>
-            <tr>
-              <td class="border p-2">Base Price</td>
-              <td class="border p-2">$100</td>
-            </tr>
-            <tr>
-              <td class="border p-2">VAT Price</td>
-              <td class="border p-2">$20</td>
-            </tr>
-            <tr>
-              <td class="border p-2">Total Price</td>
-              <td class="border p-2">${{ calculateTotalPrice() }}</td>
+            <tr v-for="price in prices">
+              <td class="border p-2">{{price.name}}</td>
+              <td class="border p-2">20%</td>
+              <td class="border p-2">{{price.price}}</td>
+              <td class="border p-2">{{ calculateTotalPrice(price.price) }}</td>
             </tr>
             </tbody>
           </table>
@@ -107,7 +103,8 @@ export default {
   },
   props: {
     countries: Object,
-    universities:Object
+    universities:Object,
+    prices:Object
   },
   data() {
     return {
@@ -125,12 +122,10 @@ export default {
     };
   },
   methods: {
-    handleFileChange(event) {
-      // Handle file change logic (e.g., validation)
-    },
-    calculateTotalPrice() {
-      // Add logic to calculate total price based on the selected options
-      return 120; // Example value, replace it with your calculation logic
+
+    calculateTotalPrice(price) {
+      console.log(price+(100*0.20));
+      return price+(100*0.20);
     },
 
     store() {

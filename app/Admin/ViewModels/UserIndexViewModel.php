@@ -22,10 +22,6 @@ class UserIndexViewModel extends ViewModel
             return $q->whereIn('status', [CertifiedUserStatusEnum::NEW,CertifiedUserStatusEnum::REJECTED]);
         });
 
-        $query->when(Auth::user()->hasRole('manager'), function ($q) {
-            return $q->whereIn('status', [CertifiedUserStatusEnum::INITIAL_ACCEPTANCE,CertifiedUserStatusEnum::APPROVED,CertifiedUserStatusEnum::REJECTED]);
-        });
-
         return $query->paginate(10)->withQueryString();
 
     }
