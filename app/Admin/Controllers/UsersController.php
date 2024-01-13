@@ -4,6 +4,9 @@ namespace App\Admin\Controllers;
 
 use App\Admin\Requests\StoreUserRequest;
 use App\Admin\Requests\UpdateUserRequest;
+use App\Admin\ViewModels\UserAdminEditViewModel;
+use App\Admin\ViewModels\UserAdminIndexViewModel;
+use App\Admin\ViewModels\UserEditViewModel;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
@@ -16,20 +19,9 @@ use Spatie\Permission\Models\Role;
 
 class UsersController extends Controller
 {
-    public function index()
+    public function index(): Response
     {
-        return Inertia::render('Admin/Users/Index', [
-            'filters' => Request::all('search', 'trashed'),
-            'users' => User::orderByName()
-                ->filter(Request::only('search','trashed'))
-                ->get()
-                ->transform(fn ($user) => [
-                    'id' => $user->id,
-                    'name' => $user->name,
-                    'email' => $user->email,
-                    'deleted_at' => $user->deleted_at,
-                ]),
-        ]);
+        return Inertia::render('Admin/Users/Index', new UserAdminIndexViewModel());
     }
 
     public function create(): Response
@@ -46,19 +38,7 @@ class UsersController extends Controller
 
     public function edit(User $user): Response
     {
-        return Inertia::render('Admin/Users/Edit', [
-            'can' => Auth::user()->hasRole('manager'),
-            'user' => [
-                'id' => $user->id,
-                'first_name' => $user->first_name,
-                'last_name' => $user->last_name,
-                'email' => $user->email,
-                'owner' => $user->owner,
-                'role_id'=> $user->roles[0]->id ?? null,
-                'deleted_at' => $user->deleted_at,
-            ],
-            'roles' => Role::all()
-        ]);
+        return Inertia::render('Admin/Users/Edit', new UserAdminEditViewModel($user));
     }
 
     public function update(UpdateUserRequest $request,User $user): RedirectResponse
@@ -70,7 +50,7 @@ class UsersController extends Controller
         $user->update($request->safe()->except(['role_id','password']));
 
         /** assign role */
-        ;
+
         $user->syncRoles([request()->input('role_id')]);
 
         if (Request::get('password')) {

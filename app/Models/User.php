@@ -69,7 +69,7 @@ class User extends Authenticatable implements HasMedia
 
     public function isSuperAdminUser(): bool
     {
-        return $this->email === 'johndoe@example.com';
+        return $this->email === 'admin@example.com';
     }
 
     public function scopeOrderByName($query): void

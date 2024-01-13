@@ -4,14 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Price extends Model
 {
-    use HasFactory;
-    public function scopeOrderByName($query): void
-    {
-        $query->orderBy('name');
-    }
+    use HasFactory,SoftDeletes;
     public function scopeFilter($query, array $filters): void
     {
         $query->when($filters['search'] ?? null, function ($query, $search) {

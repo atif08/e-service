@@ -4,8 +4,6 @@ namespace App\Admin\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Models\Price;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Request;
 use Inertia\Inertia;
@@ -14,18 +12,12 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 
 class PriceController extends Controller
 {
-    public function __construct()
-    {
-        if (Gate::denies('is-manager')) {
-            abort(403);
-        }
-    }
 
     public function index(): Response
     {
         return Inertia::render('Admin/Prices/Index', [
             'filters' => Request::all('search', 'trashed'),
-            'prices' => Price::orderByName()
+            'prices' => Price::orderBy('id','desc')
                 ->filter(Request::only('search', 'trashed'))
                 ->get(),
         ]);
@@ -38,14 +30,11 @@ class PriceController extends Controller
 
     }
 
-    public function store(\Illuminate\Http\Request $request): RedirectResponse
-    {
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'price' => 'required|numeric|min:0',
-        ]);
 
-        Price::create($validated);
+    public function store(): RedirectResponse
+    {
+
+        Price::create($this->validateRule());
 
         return Redirect::to('/prices')->with('success', 'Price created.');
     }
@@ -55,14 +44,11 @@ class PriceController extends Controller
         return Inertia::render('Admin/Prices/Edit',['price'=>$price]);
     }
 
-    public function update(\Illuminate\Http\Request $request,Price $price): RedirectResponse
-    {
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'price' => 'required|numeric|min:0',
-        ]);
 
-        $price->update($validated);
+    public function update(Price $price): RedirectResponse
+    {
+
+        $price->update($this->validateRule());
 
         return Redirect::to('/prices')->with('success', 'Price updated.');
     }
@@ -80,6 +66,14 @@ class PriceController extends Controller
         $price->restore();
 
         return Redirect::back()->with('success', 'User restored.');
+    }
+
+    protected function validateRule(): array
+    {
+        return request()->validate([
+            'name' => 'required|string|max:255',
+            'price' => 'required|numeric|min:0',
+        ]);
     }
 
 
